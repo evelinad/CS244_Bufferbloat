@@ -35,12 +35,12 @@ parser.add_argument('--bw-host', '-B',
 parser.add_argument('--bw-net', '-b',
                     type=float,
                     help="Bandwidth of bottleneck (network) link (Mb/s)",
-                    default=1.5)
+                    required=True)
 
 parser.add_argument('--delay',
                     type=float,
                     help="Link propagation delay (ms)",
-                    default=10)
+                    required=True)
 
 parser.add_argument('--dir', '-d',
                     help="Directory to store outputs",
