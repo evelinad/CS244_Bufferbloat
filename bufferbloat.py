@@ -117,7 +117,11 @@ def start_iperf(net):
     server = h2.popen("iperf -s -w 16m")
     # TODO: Start the iperf client on h1.  Ensure that you create a
     # long lived TCP flow.
-    client = h1.popen("iperf -c %s" % h2.IP())
+    # 5 seconds added to account for CPU time until reaching fetch_webpage
+    client = h1.popen("iperf -c %s -t %d" % (h2.IP(), args.time + 5))
+
+def stop_iperf():
+    Popen("pgrep -f iperf | xargs kill -9", shell=True).wait()
 
 def start_webserver(net):
     print "Starting webserver..."
@@ -143,6 +147,7 @@ def stop_ping():
     Popen("pgrep -f ping | xargs kill -9", shell=True).wait()
 
 def fetch_webpage(net):
+    # h2 fetches index.html from h1 every 5 seconds
     print "Fetching webpages"
     h1 = net.getNodeByName('h1')
     h2 = net.getNodeByName('h2')
@@ -159,7 +164,6 @@ def fetch_webpage(net):
                          % h1.IP())
         fetch.wait()
         fetch_times.append(float(fetch.communicate()[0]))
-        print fetch_times
     return fetch_times
 
 def bufferbloat():
@@ -183,7 +187,7 @@ def bufferbloat():
     # interface?  The interface numbering starts with 1 and increases.
     # Depending on the order you add links to your network, this
     # number may be 1 or 2.  Ensure you use the correct number.
-    qmon = start_qmon(iface='s0-eth1',
+    qmon = start_qmon(iface='s0-eth2',
                       outfile='%s/q.txt' % (args.dir))
 
     # TODO: Start iperf, webservers, etc.
@@ -212,6 +216,7 @@ def bufferbloat():
     stop_tcpprobe()
     qmon.terminate()
     stop_ping()
+    stop_iperf()
     net.stop()
     # Ensure that all processes you create within Mininet are killed.
     # Sometimes they require manual killing.

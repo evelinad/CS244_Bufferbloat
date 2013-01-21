@@ -3,7 +3,7 @@
 # Note: Mininet must be run as root.  So invoke this shell script
 # using sudo.
 
-time=15
+time=200
 bwnet=1.5
 # TODO: If you want the RTT to be 20ms what should the delay on each
 # link be?  Set this value correctly.
@@ -19,7 +19,7 @@ for qsize in 20 100; do
     # TODO: Ensure the input file names match the ones you use in
     # bufferbloat.py script.  Also ensure the plot file names match
     # the required naming convention when submitting your tarball.
-    # python plot_tcpprobe.py -f $dir/cwnd.txt -o $dir/cwnd-iperf.png -p $iperf_port
-    # python plot_queue.py -f $dir/q.txt -o $dir/q.png
-    # python plot_ping.py -f $dir/ping.txt -o $dir/rtt.png
+    python plot_tcpprobe.py -f $dir/cwnd.txt -o $dir/cwnd-iperf.png -p $iperf_port
+    python plot_queue.py -f $dir/q.txt -o $dir/q.png
+    python plot_ping.py -f $dir/ping.txt -o $dir/rtt.png
 done
