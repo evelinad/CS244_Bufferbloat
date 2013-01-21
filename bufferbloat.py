@@ -147,14 +147,14 @@ def stop_ping():
     Popen("pgrep -f ping | xargs kill -9", shell=True).wait()
 
 def fetch_webpage(net):
-    # h2 fetches index.html from h1 every 10 seconds
+    # h2 fetches index.html from h1 approximately 3 times per run
     print "Fetching webpages"
     h1 = net.getNodeByName('h1')
     h2 = net.getNodeByName('h2')
     fetch_times = []
     start_time = time()
     while True:                                              
-        sleep(10)
+        sleep(args.time/4)
         now = time()
         delta = now - start_time
         if delta > args.time:

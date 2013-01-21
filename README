@@ -1,9 +1,41 @@
-With queue = 20 packets:
+Ryan Wilson
+CS 244
+Assignment 1
 
-Average fetch time: 2.860120
-Standard deviation of fetch times: 0.423077
+Instructions:
+To reproduce the graphs and their corresponding results, run 'sudo ./run.sh'
+The results for a router buffer of 20 packets are in bb-q20/
+The results for a router buffer of 100 packets are in bb-q100/
 
-With queue = 100 packets:
+The time measured for h2 to fetch the /http/index.html file from h1 via curl is as follows.
+Note that the times were measured three times during the 200 second test, approximately at
+50 s, 100 s and 150 s:
 
-Average fetch time: 7.616625
-Standard deviation of fetch times: 1.372076
+With a router buffer of 20 packets:
+
+Average fetch time: 2.506333
+Standard deviation of fetch times: 0.054738
+
+With a router buffer of 100 packets:
+
+Average fetch time: 8.394333
+Standard deviation of fetch times: 0.338964
+
+Questions
+1. The packets when the buffer is 100 packets long will wait in the queue instead of being
+dropped. Thus, TCP will continue sending packets with a larger window, further bloating the
+buffer instead of reducing its window (when the buffer is 20 packets).
+
+2. The EC2 instance has a maximum transmit queue length of 1000 packets with a MTU of 1500 bytes.
+
+The maximum time the packet could wait in the queue is
+(1000 packets * 1500 bytes / packet * 8 bits / byte) / (100 Mb / s) = 12 ms
+
+3. RTT = RTT_min + current_buffer_size / bottleneck_link_rate
+In this situation, RTT = 20 ms + current_buffer_size / (1.5 Mb / s)
+
+4.
+- Reducing the TCP timeout value would prevent bufferbloat as packets stuck in long router
+queues would be considered dropped and the TCP cwnd value would be reduced.
+- Setting custom buffer length values in routers and switches based on the speed of the local
+network. Many IT administrators leave the router buffers as the default value.
