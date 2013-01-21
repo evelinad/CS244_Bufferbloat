@@ -74,12 +74,17 @@ class BBTopo(Topo):
         super(BBTopo, self).__init__()
 
         # TODO: create two hosts
+        host1 = self.addHost('h1')
+        host2 = self.addHost('h2')
 
         # Here I have created a switch.  If you change its name, its
         # interface names will change from s0-eth1 to newname-eth1.
-        self.addSwitch('s0')
+        switch = self.addSwitch('s0')
 
         # TODO: Add links with appropriate characteristics
+        self.addLink(host1, switch, bw=args.bw-host, delay=args.delay)
+        self.addLink(host2, switch, bw=args.bw-net, delay=args.delay)
+
         return
 
 # Simple wrappers around monitoring utilities.  You are welcome to
@@ -108,6 +113,7 @@ def start_iperf(net):
     server = h2.popen("iperf -s -w 16m")
     # TODO: Start the iperf client on h1.  Ensure that you create a
     # long lived TCP flow.
+    client = h1.popen("iperf -c %d" % h2.IP)
 
 def start_webserver(net):
     h1 = net.getNodeByName('h1')
@@ -119,6 +125,8 @@ def start_ping(net):
     # TODO: Start a ping train from h1 to h2 (or h2 to h1, does it
     # matter?)  Measure RTTs every 0.1 second.  Read the ping man page
     # to see how to do this.
+    h1 = net.getNodeByName('h1')
+    ping = h1.popen("ping -i 0.1 > %s/ping.txt" % args.dir, shell=True)
 
     # Hint: Use host.popen(cmd, shell=True).  If you pass shell=True
     # to popen, you can redirect cmd's output using shell syntax.
@@ -150,7 +158,9 @@ def bufferbloat():
                       outfile='%s/q.txt' % (args.dir))
 
     # TODO: Start iperf, webservers, etc.
-    # start_iperf(net)
+    start_iperf(net)
+    start_webserver(net)
+    start_ping(net)
 
     # TODO: measure the time it takes to complete webpage transfer
     # from h1 to h2 (say) 3 times.  Hint: check what the following
