@@ -1,0 +1,9 @@
+With queue = 20 packets:
+
+Average fetch time: 2.860120
+Standard deviation of fetch times: 0.423077
+
+With queue = 100 packets:
+
+Average fetch time: 7.616625
+Standard deviation of fetch times: 1.372076
